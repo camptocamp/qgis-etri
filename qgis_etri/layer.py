@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from qgis.PyQt.QtCore import QVariant
 
 from qgis.core import QgsVectorLayer
@@ -36,7 +38,7 @@ class criteria_layer(QgsVectorLayer):
         self.alternatives = Alternatives([])
         self.pt = PerformanceTable([])
 
-        self.hasNullValues = False
+        self.nullValues = defaultdict(list)
         for feat in provider.getFeatures():
             featid = str(feat.id())
             perfs = {}
@@ -44,10 +46,9 @@ class criteria_layer(QgsVectorLayer):
                 try:
                     perfs[criterion.id] = float(feat[criterion.id])
                 except:
-                    print(feat[criterion.id], type(feat[criterion.id]), dir(feat[criterion.id]))
                     if feat[criterion.id].isNull():
                         perfs[criterion.id] = None
-                        self.hasNullValues = True
+                        self.nullValues[feat.id()].append(criterion.id)
                     else:
                         perfs[criterion.id] = feat[criterion.id].toDouble()[0]
 

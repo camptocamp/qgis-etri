@@ -380,11 +380,14 @@ class main_window(QDialog, Ui_main_window):
         self.graph_plot2.setScene(graph)
 
     def __loadlayer(self):
-        if self.layer.hasNullValues:
+        if self.layer.nullValues:
             QMessageBox.critical(
                 None,
                 "Null values",
-                "The selected layer contains null values. Please remove those before loading the layer."
+                "The selected layer contains null values. Please remove those features or fill their "
+                "fields before loading the layer.\n\n"
+                "Feature ids and field names listed below:\n"
+                + str(dict(self.layer.nullValues))
             )
             return
 
