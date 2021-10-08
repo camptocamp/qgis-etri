@@ -4,6 +4,7 @@ from qgis.core import QgsVectorLayer
 from qgis_etri.mcda.types import Criteria, Criterion, Alternative, Alternatives
 from qgis_etri.mcda.types import PerformanceTable, AlternativePerformances
 
+
 class criteria_layer(QgsVectorLayer):
 
     def __init__(self, layer):
@@ -35,6 +36,7 @@ class criteria_layer(QgsVectorLayer):
         self.alternatives = Alternatives([])
         self.pt = PerformanceTable([])
 
+        self.hasNullValues = False
         for feat in provider.getFeatures():
             featid = str(feat.id())
             perfs = {}
@@ -42,7 +44,12 @@ class criteria_layer(QgsVectorLayer):
                 try:
                     perfs[criterion.id] = float(feat[criterion.id])
                 except:
-                    perfs[criterion.id] = feat[criterion.id].toDouble()[0]
+                    print(feat[criterion.id], type(feat[criterion.id]), dir(feat[criterion.id]))
+                    if feat[criterion.id].isNull():
+                        perfs[criterion.id] = None
+                        self.hasNullValues = True
+                    else:
+                        perfs[criterion.id] = feat[criterion.id].toDouble()[0]
 
             self.alternatives.append(Alternative(featid, featid))
             self.pt.append(AlternativePerformances(featid, perfs))

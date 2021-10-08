@@ -380,6 +380,14 @@ class main_window(QDialog, Ui_main_window):
         self.graph_plot2.setScene(graph)
 
     def __loadlayer(self):
+        if self.layer.hasNullValues:
+            QMessageBox.critical(
+                None,
+                "Null values",
+                "The selected layer contains null values. Please remove those before loading the layer."
+            )
+            return
+
         # References to map criteria and alternatives
         self.criteria = self.layer.criteria
         self.alternatives = self.layer.alternatives
