@@ -228,6 +228,15 @@ class main_window(QDialog, Ui_main_window):
         index = self.combo_layer.currentIndex()
         map_canvas = self.iface.mapCanvas()
         try:
+            if map_canvas.layer(index).name() != self.combo_layer.currentText():
+                QMessageBox.information(
+                    None,
+                    "Layer index mismatch",
+                    "The layers in the drop down box are not in line with the project layers.\n"
+                    "Maybe some layers have been added or removed while the etri plugin was open.\n"
+                    "Please close and reload the plugin window to refresh the layer list."
+                )
+                return
             self.layer = criteria_layer(map_canvas.layer(index))
             self.__clear_tables()
             self.button_zoom.setEnabled(False)
